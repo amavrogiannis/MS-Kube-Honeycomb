@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  OTEL_EXPORTER_OTLP_ENDPOINT: https://api.honeycomb.io
+  OTEL_SERVICE_NAME: flask_app
+  HONEYCOMB_METRICS_DATASET: demo-alex
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: honeycombio-cm

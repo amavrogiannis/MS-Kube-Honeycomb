@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: flaskapp-v2
+  name: flaskapp-v2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flaskapp-v2
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: flaskapp-v2
+    spec:
+      containers:
+      - image: docker.io/library/blogapp:20230824095831
+        name: blogapp
+        ports:
+        - containerPort: 5000
+        env:
+        - name: HONEYCOMB_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: honeycombio-api
+              key: HONEYCOMB_API_KEY
+        - name: HONEYCOMB_METRICS_DATASET
+          valueFrom: 
+            configMapKeyRef:
+              key: HONEYCOMB_METRICS_DATASET
+              name: honeycombio-cm
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          valueFrom: 
+            configMapKeyRef:
+              key: OTEL_EXPORTER_OTLP_ENDPOINT
+              name: honeycombio-cm
+        - name: OTEL_SERVICE_NAME
+          valueFrom: 
+            configMapKeyRef:
+              key: OTEL_SERVICE_NAME
+              name: honeycombio-cm
+        resources: {}
+status: {}
