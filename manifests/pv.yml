@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: sqlite-pv
+  name: my-pv
   labels:
     type: local
 spec:
@@ -11,12 +11,12 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "var/lib/docker"
+    path: "/db"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: sqlite-pvc
+  name: my-pvc
   labels:
     type: local
 spec:
@@ -26,4 +26,4 @@ spec:
   resources:
     requests:
       storage: 2Gi
-  volumeName: sqlite-pv
+  volumeName: my-pv

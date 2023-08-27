@@ -6,7 +6,7 @@ metadata:
     app: flaskapp-v1
   name: flaskapp-v1
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: flaskapp-v1
@@ -18,7 +18,7 @@ spec:
         app: flaskapp-v1
     spec:
       containers:
-      - image: docker.io/library/blogapp:20230824223242
+      - image: docker.io/library/blogapp:20230825144538
         name: blogapp
         ports:
         - containerPort: 5000
