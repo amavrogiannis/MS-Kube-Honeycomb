@@ -15,12 +15,14 @@ secret_key = os.urandom(24).hex()
 #     conn.row_factory = sqlite3.Row
 #     return conn
 
+# Connect to Postgres
 def get_db_connection():
     conn = psycopg2.connect(
         host = os.getenv('DB_CONN'),
         database = os.getenv('DB_NAME'),
-        user = 'standard',
-        password = os.getenv('DB_PASS')
+        user = 'hcuser',
+        password = os.getenv('DB_PASS'),
+        port = '5432'
     )
 
 def get_post(post_id):

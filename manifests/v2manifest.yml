@@ -1,0 +1,113 @@
+apiVersion: v1
+data:
+  OTEL_EXPORTER_OTLP_ENDPOINT: https://api.honeycomb.io
+  OTEL_SERVICE_NAME: flask_app
+  HONEYCOMB_METRICS_DATASET: demo-alex
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: honeycombio-cm
+---
+apiVersion: v1
+data:
+  HONEYCOMB_API_KEY: NmlSQW9IRUNiZnB0TGZ2R3RUOGVZRQ==
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: honeycombio-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: flaskapp-v1
+  name: flaskapp-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flaskapp-v1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: flaskapp-v1
+    spec:
+      containers:
+      - image: docker.io/library/blogapp:20230825144538
+        name: blogapp
+        ports:
+        - containerPort: 5000
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        env:
+        - name: HONEYCOMB_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: honeycombio-api
+              key: HONEYCOMB_API_KEY
+        - name: HONEYCOMB_METRICS_DATASET
+          valueFrom: 
+            configMapKeyRef:
+              key: HONEYCOMB_METRICS_DATASET
+              name: honeycombio-cm
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          valueFrom: 
+            configMapKeyRef:
+              key: OTEL_EXPORTER_OTLP_ENDPOINT
+              name: honeycombio-cm
+        - name: OTEL_SERVICE_NAME
+          valueFrom: 
+            configMapKeyRef:
+              key: OTEL_SERVICE_NAME
+              name: honeycombio-cm
+        resources: {}
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: flaskapp
+  name: flaskapp
+spec:
+  ports:
+  - port: 30500
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: flaskapp-v1
+  type: NodePort
+status:
+  loadBalancer: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  creationTimestamp: null
+  name: blogapp
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/add-base-url: "true"
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+spec:
+  rules:
+  - host: example.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: flaskapp
+            port:
+              number: 30500
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer: {}
