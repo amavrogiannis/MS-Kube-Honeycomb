@@ -2,8 +2,11 @@ FLASK_APP=src/app
 FLASK_ENV=dev
 PYTHONUNBUFFERED=true
 
-IMAGE=blogapp
+IMAGE=alexmavcouk/blog-app
 VERSION:=$(shell date +'%Y%m%d%H%M%S')
+
+DOCKER_USER=alexmavcouk
+DOCKER_PASSWORD=$(shell pass show docker_hub_personal)
 
 .PHONY: install-local
 install-local:
@@ -43,7 +46,9 @@ trace:
 
 .PHONY: docker-build
 docker-build:
-	@docker build -t $(IMAGE):$(VERSION) .
+	echo "$(DOCKER_PASSWORD)" | docker login -u $(DOCKER_USER) --password-stdin
+	docker buildx build --builder mybuilder -t $(IMAGE):$(VERSION) . --push --platform linux/amd64,linux/arm64
+# docker push $(IMAGE):$(VERSION)
 
 # Make commands in Kubernetes below onwards. 
 
@@ -53,4 +58,5 @@ minikube:
 
 .PHONY: kube-manifest
 kube-manifest:
-	@kubectl apply -f manifests/manifest.yml
+	kubectl apply -f manifests/v1deploy.yml
+	kubectl apply -f manifest/honeycombio.yml
