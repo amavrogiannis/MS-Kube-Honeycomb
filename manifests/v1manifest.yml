@@ -36,7 +36,7 @@ spec:
         app: flaskapp-v1
     spec:
       containers:
-      - image: alexmavcouk/blog-app:20230901171021
+      - image: alexmavcouk/blog-app:20230911093713
         name: blogapp
         ports:
         - containerPort: 5000
@@ -94,10 +94,10 @@ metadata:
   creationTimestamp: null
   name: blogapp
   annotations:
-    kubernetes.io/ingress.class: "alb"
     nginx.ingress.kubernetes.io/add-base-url: "true"
     nginx.ingress.kubernetes.io/service-upstream: "true"
 spec:
+  ingressClassName: alb
   rules:
   # - host: example.local
   - http:

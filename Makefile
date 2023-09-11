@@ -52,6 +52,21 @@ docker-build:
 
 # Make commands in Kubernetes below onwards. 
 
+calico:
+	kubectl create namespace tigera-operator
+	helm install calico projectcalico/tigera-operator --version v3.25.1 --namespace tigera-operator
+
+eks-nginx:
+	kubectl create namespace ingress-nginx
+	helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+	helm repo update
+	helm install ingress-nginx ingress-nginx/ingress-nginx \
+		--namespace ingress-nginx \
+		--set controller.replicaCount=2 \
+		--set controller.nodeSelector."beta\.kubernetes\.io/os"=linux \
+		--set defaultBackend.nodeSelector."beta\.kubernetes\.io/os"=linux
+
+
 .PHONY: minikube
 minikube:
 	@minikube start --addons=default-storageclass, ingress, ingress-dns, storage-provisioner
