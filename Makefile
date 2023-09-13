@@ -75,3 +75,44 @@ minikube:
 kube-manifest:
 	kubectl apply -f manifests/v1deploy.yml
 	kubectl apply -f manifest/honeycombio.yml
+
+# Make Demo
+demo-build:
+	echo "$(DOCKER_PASSWORD)" | docker login -u $(DOCKER_USER) --password-stdin
+	docker buildx build --builder mybuilder -t $(IMAGE)-demo:$(VERSION) . --push --platform linux/amd64,linux/arm64
+
+.PHONY: demo-start
+demo-start:
+	minikube start -p cluster1
+	minikube start -p cluster2
+	minikube start --addons=default-storageclass, storage-provisioner
+	minikube addons enable ingress
+
+demo-update:
+	kubectl apply -f manifests/demoManifest.yml
+	kubectl apply -f manifests/demoHoneyio.yml
+
+demo-stop:
+	minikube stop
+	minikube stop -p cluster1
+	minikube stop -p cluster2
+
+demo-delete:
+	minikube delete --all
+
+con-mini:
+	kubectl config use-context minikube
+
+con-c1:
+	kubectl config use-context cluster1
+	kubectl create deployment test-deploy-cluster1 --image=nginx 
+
+con-c2:
+	kubectl config use-context cluster2
+	kubectl create deployment test-deploy-cluster1 --image=nginx --replicas=13
+
+app-fault:
+	kubectl apply -f manifests/demoDeploy.yml
+
+app-fix:
+	kubectl replace -f manifests/demoDeployFix.yml

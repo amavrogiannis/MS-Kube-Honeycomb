@@ -9,10 +9,13 @@ module "eks" {
   cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
 
+  # enable_irsa_support = false
+  # oidc_provider_enabled = false
 
   eks_managed_node_group_defaults = {
     disk_size      = 60 // Disk size is measured in GiB
     instance_types = ["t3.medium"]
+    vpc_security_group_ids = 
   }
 
   cluster_addons = {
@@ -20,6 +23,9 @@ module "eks" {
       most_recent = true
     }
     kube-proxy = {
+      most_recent = true
+    }
+    vpc-cni = {
       most_recent = true
     }
   }
@@ -39,6 +45,8 @@ module "eks" {
       instance_types = ["t3.medium"]
       capacity_type  = "ON_DEMAND"
 
+      node_role_arn = "arn:aws:iam::948754295911:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSServiceRoleForAmazonEKSNodegroup"
+
       use_custom_launch_template = false
       disk_size                  = 60
 
@@ -47,7 +55,7 @@ module "eks" {
 
       create_iam_role          = true
       iam_role_name            = "alex-hc-eks-node-role"
-      iam_role_use_name_prefix = false
+      iam_role_use_name_prefix = true
       iam_role_description     = "EKS managed node group complete example role"
     }
   }

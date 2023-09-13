@@ -1,4 +1,11 @@
-database.db 
+# database.db 
 **/__pycache__/**
-schema.sql
 **/database/**
+**/src_postgre/**
+init_db.py 
+mpytest.ipynb
+schema.sql 
+.gitignore
+.env.*
+**/terraform/**
+**/manifests/**

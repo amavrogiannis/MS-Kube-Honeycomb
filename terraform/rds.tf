@@ -18,7 +18,7 @@ module "db" {
 
 
   db_subnet_group_name   = module.vpc.database_subnet_group_name
-  vpc_security_group_ids = [module.security_group.security_group_id]
+  vpc_security_group_ids = [module.rds_sg.security_group_id]
   parameter_group_name   = module.vpc.database_subnet_group_name
 
   publicly_accessible = false
@@ -36,8 +36,7 @@ module "db" {
   tags = local.tags
 
   depends_on = [
-    module.vpc,
-    module.security_group
+    module.vpc
   ]
 
 }
