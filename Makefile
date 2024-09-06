@@ -116,3 +116,11 @@ app-fault:
 
 app-fix:
 	kubectl replace -f manifests/demoDeployFix.yml
+
+stop-clusters:
+	minikube stop -p cluster1
+	minikube stop -p cluster2
+
+start-clusters:
+	minikube start -p cluster1
+	minikube start -p cluster2

@@ -15,7 +15,7 @@ module "eks" {
   eks_managed_node_group_defaults = {
     disk_size      = 60 // Disk size is measured in GiB
     instance_types = ["t3.medium"]
-    vpc_security_group_ids = 
+    # vpc_security_group_ids = 
   }
 
   cluster_addons = {
